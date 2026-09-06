@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JobScout AI — Autonomous Career Assistant</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --bg:#04091a;--panel:rgba(18,30,64,.72);--line:rgba(100,155,255,.28);
+ --white:#f7f9ff;--muted:#a9b8d7;--orange:#ff9d32;--pink:#e62ddd;
+ --blue:#3d8dff;--cyan:#35e5ff;--green:#25df9c;--purple:#9b5cff;
+}
+html{scroll-behavior:smooth}
+body{
+ zoom:0.9;
+ font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--white);min-height:100vh;
+ background:
+ radial-gradient(circle at 4% 35%,rgba(20,105,255,.20),transparent 25%),
+ radial-gradient(circle at 92% 28%,rgba(205,35,255,.17),transparent 26%),
+ radial-gradient(circle at 50% 100%,rgba(0,130,255,.13),transparent 32%),
+ var(--bg);overflow-x:hidden
+}
+body:before,body:after{
+ content:"";position:fixed;border-radius:50%;pointer-events:none;filter:blur(65px);z-index:-2
+}
+body:before{width:220px;height:220px;background:#246fff33;left:-100px;top:180px}
+body:after{width:260px;height:260px;background:#d12bff22;right:-110px;bottom:120px}
+
+nav{
+ height:88px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;
+ position:sticky;top:0;z-index:100;background:#050b1bd9;backdrop-filter:blur(18px);
+ border-bottom:1px solid #ffffff0b
+}
+.brand{display:flex;align-items:center;gap:12px}
+.robot{
+ width:50px;height:50px;border-radius:15px;display:grid;place-items:center;font-size:27px;
+ background:linear-gradient(135deg,#318cff,#7939ff);box-shadow:0 0 28px #387dff55
+}
+.brand h1{font-size:25px}.brand h1 span{color:var(--orange)}
+.brand small{display:block;color:#aab8d5;font-size:12px;margin-top:3px}
+.navlinks{display:flex;padding:6px;border:1px solid var(--line);border-radius:32px;background:#14203e99}
+.navlinks a{padding:12px 21px;border-radius:25px;color:#dbe5ff;text-decoration:none}
+.navlinks a.active,.navlinks a:hover{background:#ff9d3222;color:var(--orange)}
+.start{
+ border:0;border-radius:30px;padding:15px 25px;font-weight:800;font-size:15px;cursor:pointer;
+ background:linear-gradient(135deg,#ffb03c,#ff8838);box-shadow:0 0 30px #ff9c3244
+}
+.hero{width:90%;max-width:1400px;margin:48px auto 0;display:grid;grid-template-columns:1fr 1fr;gap:55px;align-items:center}
+.badge{
+ display:inline-flex;padding:10px 17px;border-radius:25px;border:1px solid var(--line);
+ background:#14234499;color:#d9e5ff;font-size:13px;margin-bottom:23px
+}
+h2.hero-title{font-size:clamp(48px,5.4vw,76px);line-height:.99;letter-spacing:-3px}
+.gradient{background:linear-gradient(90deg,#ff9d32,#ff5278,#df25e7);-webkit-background-clip:text;color:transparent}
+.lead{font-size:18px;line-height:1.65;color:#b8c7e4;max-width:640px;margin:24px 0 32px}
+.features{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.feature{text-align:center}.ficon{
+ width:64px;height:64px;margin:auto;display:grid;place-items:center;border-radius:18px;
+ background:#17274eaa;border:1px solid #5d89dc44;font-size:28px
+}
+.feature:nth-child(1) .ficon{color:#c765ff}.feature:nth-child(2) .ficon{color:#ff9d32}
+.feature:nth-child(3) .ficon{color:#3d9aff}.feature:nth-child(4) .ficon{color:#32e4b0}
+.feature p{font-size:13px;line-height:1.3;color:#dce5f7;margin-top:9px}
+
+.upload-card{
+ position:relative;padding:30px;border-radius:26px;background:linear-gradient(145deg,#1a3162d9,#0d1735db);
+ border:1px solid #5793ff66;box-shadow:0 25px 70px #00000066,inset 0 0 55px #347dff12;overflow:visible
+}
+.upload-card:before{
+ content:"";position:absolute;width:190px;height:190px;right:-70px;top:-80px;border-radius:50%;
+ background:#438cff33;filter:blur(50px);pointer-events:none
+}
+.upload-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.upload-head h3{font-size:25px}.type{padding:10px 15px;border-radius:22px;background:#53638955;color:#dbe5ff;font-size:13px}
+.drop{
+ min-height:235px;border:2px dashed #a8c0f488;border-radius:18px;background:#07112766;
+ display:grid;place-items:center;text-align:center;padding:25px;transition:.25s
+}
+.drop.drag{border-color:var(--cyan);background:#1685ff14;transform:scale(1.01)}
+.cloud{font-size:55px;color:#bfd1ff;margin-bottom:10px}.drop h4{font-size:17px}.drop p{color:#92a5c8;font-size:14px;margin:8px 0 18px}
+input[type=file]{display:none}
+.choose{
+ display:inline-block;cursor:pointer;padding:13px 25px;border-radius:10px;font-weight:800;
+ background:linear-gradient(90deg,#ffae38,#df28de)
+}
+.file-name{color:#57e4ff;font-size:13px;margin-top:12px;min-height:18px}
+.find{
+ width:100%;margin-top:25px;padding:18px;border:0;border-radius:13px;color:#fff;
+ font-size:18px;font-weight:800;cursor:pointer;background:linear-gradient(90deg,#ffac35,#e326df);
+ box-shadow:0 0 30px #df2cdd33;transition:.25s
+}
+.find:hover{transform:translateY(-2px);box-shadow:0 0 38px #df2cdd66}
+.find:disabled{opacity:.55;cursor:not-allowed}
+.secure{text-align:center;color:#9aaacc;font-size:13px;margin-top:18px}
+.cv-art{
+ position:absolute;right:-125px;bottom:5px;width:185px;height:240px;padding:22px;border-radius:22px;
+ transform:rotate(8deg);background:linear-gradient(145deg,#7841d9,#262b8d);
+ border:1px solid #d7b5ff77;box-shadow:0 0 45px #8d4cff55;z-index:2
+}
+.cv-art strong{font-size:42px}.cv-line{height:7px;border-radius:8px;background:#ffffff45;margin:15px 0}
+.orbit{position:absolute;width:290px;height:120px;border:3px solid #ff9d3266;border-left-color:transparent;border-radius:50%;right:-125px;bottom:60px;transform:rotate(-15deg);z-index:1}
+.note{position:absolute;font-family:"Comic Sans MS",cursive;color:#62b9ff;font-size:15px;line-height:1.2}
+.note.one{right:-145px;top:-48px;color:#f0a4e9}.note.two{left:-115px;bottom:80px}.note.three{right:-135px;bottom:-62px;color:#9e73ff}
+.stats{width:90%;max-width:1400px;margin:72px auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.stat{
+ display:flex;align-items:center;gap:18px;padding:24px;border-radius:18px;background:#14203fb8;
+ border:1px solid var(--line);transition:.25s
+}
+.stat:hover{transform:translateY(-5px)}.stat-icon{font-size:34px}.stat h3{font-size:28px}.stat p{color:#a7b5d0;font-size:13px;margin-top:4px}
+.how{width:90%;max-width:1400px;margin:100px auto;text-align:center}
+.label{font-size:12px;letter-spacing:2px;color:var(--orange);font-weight:800;text-transform:uppercase}
+.how h2{font-size:43px;margin:10px 0}.sub{color:#9eacc9;margin-bottom:55px}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}
+.step{position:relative;padding:32px 18px 25px;border-radius:20px;background:#14203fb8;border:1px solid #5f8fe044}
+.step:hover{transform:translateY(-6px);transition:.25s}.num{
+ width:44px;height:44px;border-radius:50%;display:grid;place-items:center;margin:-54px auto 18px;
+ background:linear-gradient(135deg,#4b80ff,#cf2cff);font-weight:800;box-shadow:0 0 24px #6d54ff55
+}
+.step-icon{font-size:32px;margin-bottom:12px}.step h3{margin-bottom:8px}.step p{font-size:13px;color:#99a9c8;line-height:1.5}
+#loading{display:none;text-align:center;margin:40px auto}.loader{
+ width:55px;height:55px;border:4px solid #ffffff18;border-top-color:var(--orange);border-right-color:var(--pink);
+ border-radius:50%;animation:spin 1s linear infinite;margin:auto
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+#results{display:none;width:90%;max-width:1400px;margin:90px auto}.result-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.result-head h2{font-size:38px}
+.profile{padding:25px;border-radius:20px;background:#14203fb8;border:1px solid var(--line);margin-bottom:25px}.profile h3{color:var(--orange);margin-bottom:10px}
+.skills{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}.skill{padding:8px 12px;border-radius:20px;background:#347dff18;border:1px solid #347dff55;color:#b8d8ff;font-size:12px}
+.jobs{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}.job{
+ padding:24px;border-radius:20px;background:#14203fb8;border:1px solid #5f8fe044
+}.job-top{display:flex;justify-content:space-between;gap:15px}.job h3{font-size:20px}.score{
+ min-width:64px;height:64px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--green);
+ color:var(--green);font-weight:800;background:#25df9c12
+}.job p{color:#9eacc8;line-height:1.6;font-size:14px;margin:17px 0}.chips{display:flex;gap:7px;flex-wrap:wrap}.chip{padding:7px 10px;border-radius:8px;background:#25df9c12;color:#61e8be;font-size:12px}
+.job a{display:inline-block;margin-top:17px;padding:10px 17px;border-radius:9px;text-decoration:none;color:#fff;background:linear-gradient(90deg,#347dff,#8b2cff)}
+footer{margin-top:100px;padding:40px 5%;border-top:1px solid #ffffff0b;display:flex;justify-content:space-between;color:#8999b9}
+footer strong{color:#fff}.online{color:#3ce2ad}
+@media(max-width:1100px){.navlinks{display:none}.hero{grid-template-columns:1fr}.cv-art,.orbit,.note{display:none}.stats,.steps{grid-template-columns:repeat(2,1fr)}.jobs{grid-template-columns:1fr}}
+@media(max-width:650px){nav{height:75px}.brand small{display:none}.start{padding:11px 14px}.hero{margin-top:30px}.hero-title{font-size:44px!important}.features{grid-template-columns:repeat(2,1fr);gap:22px}.stats,.steps{grid-template-columns:1fr 1fr}.upload-card{padding:20px}.how h2{font-size:34px}footer{flex-direction:column;gap:18px}}
+
+/* =========================================================
+   90% VIEWPORT + OVERFLOW FIX
+   Keeps the compact 90% look without cutting job cards.
+========================================================= */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+main {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.hero,
+.stats,
+.how,
+#results {
+    width: min(90%, 1400px);
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+
+#results {
+    min-width: 0;
+}
+
+.jobs,
+#jobs {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    box-sizing: border-box;
+}
+
+.job {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.job-top {
+    min-width: 0;
+}
+
+.job-top > div:first-child {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.job h3,
+.job p,
+.job small,
+.job a,
+.job span {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.job p {
+    white-space: normal;
+}
+
+.job a {
+    display: inline-block;
+}
+
+.profile {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.skills,
+.chips {
+    max-width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 1100px) {
+    .jobs,
+    #jobs {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .hero,
+    .stats,
+    .how,
+    #results {
+        width: calc(100% - 24px);
+        max-width: none;
+    }
+
+    .jobs,
+    #jobs {
+        grid-template-columns: 1fr;
+    }
+
+    .job {
+        padding: 20px;
+    }
+}
+
+
+/* =========================================================
+   RESULTS DASHBOARD
+========================================================= */
+.section-kicker{font-size:11px;letter-spacing:2px;color:#3ce2ad;font-weight:800;margin-bottom:6px}
+.result-count{padding:9px 14px;border:1px solid #25df9c40;border-radius:12px;background:#25df9c0c;color:#3ce2ad;font-size:13px;font-weight:700;white-space:nowrap}
+.dashboard-tools{display:grid;grid-template-columns:minmax(220px,1fr) 190px 190px;gap:12px;margin:0 0 18px}
+.tool-search{display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid #5f8fe044;background:#101a35;border-radius:12px;color:#7e92b7}
+.tool-search input{width:100%;border:0;outline:0;background:transparent;color:#fff;padding:12px 0;font:inherit}
+.tool-search input::placeholder{color:#7183a5}
+.dashboard-tools select{border:1px solid #5f8fe044;background:#101a35;color:#dce7ff;border-radius:12px;padding:12px;outline:none}
+.dashboard-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.dash-stat{padding:15px 17px;border:1px solid #5f8fe044;border-radius:15px;background:#101a35}
+.dash-stat strong{display:block;font-size:23px;color:#fff}.dash-stat span{font-size:11px;color:#8295b9}
+.job{position:relative;transition:transform .2s,border-color .2s,box-shadow .2s}
+.job:hover{transform:translateY(-2px);border-color:#347dff66;box-shadow:0 12px 35px #00000025}
+.job-rank{position:absolute;top:17px;left:17px;padding:5px 8px;border-radius:7px;background:#347dff18;color:#83b3ff;font-size:10px;font-weight:800}
+.job-head-copy{padding-left:62px;min-width:0}.job-head-copy h3{line-height:1.35;margin-bottom:5px}
+.job-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.meta-pill{font-size:10px;color:#8ea4ca;padding:5px 8px;border-radius:7px;background:#ffffff06;border:1px solid #ffffff0a}
+.job-section{margin-top:15px;padding-top:14px;border-top:1px solid #ffffff09}.job-section-title{font-size:11px;font-weight:800;color:#b9c9e7;margin-bottom:7px;letter-spacing:.4px}
+.reason{color:#b2c0da!important;margin:0!important;font-size:13px!important;line-height:1.65!important}
+.skill-row{display:flex;gap:6px;flex-wrap:wrap}.match-skill{padding:6px 9px;border-radius:7px;background:#25df9c12;color:#61e8be;font-size:11px}.missing-skill{padding:6px 9px;border-radius:7px;background:#ff9d3212;color:#ffbf70;font-size:11px}
+.requirements{display:grid;grid-template-columns:1fr 1fr;gap:8px}.requirement{padding:9px;border-radius:9px;background:#ffffff04;color:#91a4c5;font-size:11px;line-height:1.5}.requirement b{display:block;color:#d8e3f7;font-size:10px;margin-bottom:3px}
+.query-line{font-size:10px;color:#7187ac;margin-top:12px}.query-line span{color:#a9bbda}
+.job-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.job-actions a{margin-top:0}.source-link{font-size:11px;color:#8ea4ca;text-decoration:none}.source-link:hover{color:#fff}
+.empty-state{grid-column:1/-1;text-align:center;padding:45px 20px;border:1px dashed #5f8fe044;border-radius:18px;color:#8ea4ca;background:#101a35}
+@media(max-width:900px){.dashboard-tools{grid-template-columns:1fr 1fr}.tool-search{grid-column:1/-1}.dashboard-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:650px){.dashboard-tools{grid-template-columns:1fr}.tool-search{grid-column:auto}.dashboard-stats{grid-template-columns:1fr 1fr}.requirements{grid-template-columns:1fr}.job-head-copy{padding-left:52px}.result-head h2{font-size:30px}}
+
+</style>
+
+<style id="results-polish">
+/* =========================================================
+   JOBSCOUT AI — POLISHED RESULTS DASHBOARD
+========================================================= */
+
+#results{
+    width:min(1180px, calc(100% - 32px)) !important;
+    max-width:1180px !important;
+    margin:60px auto 80px !important;
+    box-sizing:border-box;
+}
+
+.result-head{
+    display:flex !important;
+    align-items:flex-end !important;
+    justify-content:space-between !important;
+    gap:20px !important;
+    margin-bottom:22px !important;
+}
+
+.result-head h2{
+    margin:0 !important;
+    font-size:34px !important;
+    line-height:1.15 !important;
+}
+
+.result-count{
+    flex-shrink:0 !important;
+}
+
+/* Candidate profile */
+#profile.profile{
+    width:100% !important;
+    max-width:none !important;
+    padding:24px !important;
+    margin-bottom:20px !important;
+    box-sizing:border-box !important;
+    border-radius:18px !important;
+    background:linear-gradient(135deg,#111d3b,#0d1730) !important;
+    border:1px solid rgba(86,143,255,.25) !important;
+}
+
+#profile h3{
+    margin:0 0 10px !important;
+    color:#7faeff !important;
+    font-size:12px !important;
+    letter-spacing:1.2px !important;
+    text-transform:uppercase !important;
+}
+
+#profile h2{
+    margin:0 !important;
+    font-size:25px !important;
+}
+
+#profile .skills{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:7px !important;
+    margin-top:14px !important;
+}
+
+/* Search/filter row */
+#dashboardTools.dashboard-tools{
+    display:grid !important;
+    grid-template-columns:minmax(0,1fr) 190px 190px !important;
+    gap:10px !important;
+    width:100% !important;
+    margin:0 0 14px !important;
+}
+
+.tool-search{
+    min-width:0 !important;
+    height:44px !important;
+    box-sizing:border-box !important;
+}
+
+.tool-search input{
+    min-width:0 !important;
+    font-size:13px !important;
+}
+
+#dashboardTools select{
+    width:100% !important;
+    height:44px !important;
+    box-sizing:border-box !important;
+    cursor:pointer !important;
+    font-size:12px !important;
+}
+
+/* Stats in one clean row */
+#dashboardStats.dashboard-stats{
+    display:grid !important;
+    grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+    gap:10px !important;
+    width:100% !important;
+    margin:0 0 22px !important;
+}
+
+.dash-stat{
+    min-width:0 !important;
+    padding:14px 16px !important;
+    border-radius:14px !important;
+}
+
+.dash-stat strong{
+    font-size:22px !important;
+}
+
+/* Job cards */
+#jobs.jobs{
+    width:100% !important;
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:16px !important;
+    align-items:start !important;
+}
+
+#jobs .job{
+    width:100% !important;
+    min-width:0 !important;
+    padding:20px !important;
+    box-sizing:border-box !important;
+    border-radius:18px !important;
+    overflow:hidden !important;
+    background:linear-gradient(145deg,#111b38,#0e1730) !important;
+}
+
+#jobs .job-top{
+    display:flex !important;
+    align-items:flex-start !important;
+    justify-content:space-between !important;
+    gap:14px !important;
+}
+
+#jobs .job-head-copy{
+    flex:1 !important;
+    min-width:0 !important;
+    padding-left:58px !important;
+}
+
+#jobs .job-head-copy h3{
+    margin:0 0 5px !important;
+    font-size:16px !important;
+    line-height:1.4 !important;
+    overflow-wrap:anywhere !important;
+}
+
+#jobs .score{
+    flex:0 0 54px !important;
+    width:54px !important;
+    height:54px !important;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+    border-radius:50% !important;
+    font-size:13px !important;
+}
+
+#jobs .job-section{
+    margin-top:13px !important;
+    padding-top:12px !important;
+}
+
+#jobs .job-section-title{
+    margin-bottom:7px !important;
+    font-size:10px !important;
+    letter-spacing:.7px !important;
+}
+
+#jobs .reason{
+    font-size:12px !important;
+    line-height:1.55 !important;
+}
+
+#jobs .skill-row{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:5px !important;
+}
+
+#jobs .match-skill,
+#jobs .missing-skill,
+#jobs .meta-pill{
+    max-width:100% !important;
+    overflow-wrap:anywhere !important;
+    word-break:break-word !important;
+}
+
+#jobs .requirements{
+    display:grid !important;
+    grid-template-columns:1fr 1fr !important;
+    gap:7px !important;
+}
+
+#jobs .requirement{
+    min-width:0 !important;
+    overflow-wrap:anywhere !important;
+    word-break:break-word !important;
+}
+
+#jobs .query-line{
+    overflow-wrap:anywhere !important;
+    word-break:break-word !important;
+}
+
+#jobs .job-actions{
+    margin-top:14px !important;
+    padding-top:12px !important;
+    border-top:1px solid rgba(255,255,255,.06) !important;
+}
+
+#jobs .job-actions a:first-child{
+    padding:9px 14px !important;
+    border-radius:9px !important;
+    background:linear-gradient(90deg,#347dff,#8d35ff) !important;
+    color:#fff !important;
+    text-decoration:none !important;
+    font-size:12px !important;
+    font-weight:800 !important;
+}
+
+/* Prevent raw source/reader content from becoming huge */
+#jobs .job p{
+    overflow-wrap:anywhere !important;
+    word-break:break-word !important;
+}
+
+/* Responsive */
+@media(max-width:900px){
+    #dashboardTools.dashboard-tools{
+        grid-template-columns:1fr 1fr !important;
+    }
+
+    #dashboardTools .tool-search{
+        grid-column:1 / -1 !important;
+    }
+
+    #dashboardStats.dashboard-stats{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    }
+
+    #jobs.jobs{
+        grid-template-columns:1fr !important;
+    }
+}
+
+@media(max-width:600px){
+    #results{
+        width:calc(100% - 20px) !important;
+        margin-top:40px !important;
+    }
+
+    .result-head{
+        align-items:flex-start !important;
+        flex-direction:column !important;
+    }
+
+    #dashboardTools.dashboard-tools{
+        grid-template-columns:1fr !important;
+    }
+
+    #dashboardTools .tool-search{
+        grid-column:auto !important;
+    }
+
+    #dashboardStats.dashboard-stats{
+        grid-template-columns:1fr 1fr !important;
+    }
+
+    #jobs .requirements{
+        grid-template-columns:1fr !important;
+    }
+
+    #jobs .job-head-copy{
+        padding-left:50px !important;
+    }
+}
+</style>
+
+
+<style id="readable-results-fix">
+/* =========================================================
+   READABLE RESULTS DASHBOARD
+   90% zoom + large cards + comfortable text
+========================================================= */
+
+#results{
+    width:min(1450px, calc(100% - 70px)) !important;
+    max-width:1450px !important;
+    margin:55px auto 90px !important;
+}
+
+/* Header */
+#results .result-head{
+    margin-bottom:26px !important;
+}
+
+#results .result-head h2{
+    font-size:38px !important;
+    line-height:1.2 !important;
+}
+
+/* Candidate profile */
+#profile.profile{
+    padding:28px 30px !important;
+    border-radius:20px !important;
+    margin-bottom:24px !important;
+}
+
+#profile h2{
+    font-size:28px !important;
+    line-height:1.3 !important;
+}
+
+#profile p,
+#profile span{
+    font-size:13px !important;
+}
+
+/* Search + filters */
+#dashboardTools.dashboard-tools{
+    grid-template-columns:minmax(0,1fr) 220px 220px !important;
+    gap:14px !important;
+    margin-bottom:18px !important;
+}
+
+#dashboardTools .tool-search,
+#dashboardTools select{
+    height:50px !important;
+    font-size:14px !important;
+    border-radius:13px !important;
+}
+
+#dashboardTools .tool-search{
+    padding:0 16px !important;
+}
+
+#dashboardTools .tool-search input{
+    font-size:14px !important;
+}
+
+/* Statistics */
+#dashboardStats.dashboard-stats{
+    gap:14px !important;
+    margin-bottom:28px !important;
+}
+
+#dashboardStats .dash-stat{
+    min-height:72px !important;
+    padding:16px 20px !important;
+    border-radius:16px !important;
+}
+
+#dashboardStats .dash-stat strong{
+    display:inline-block !important;
+    font-size:27px !important;
+    margin-right:5px !important;
+}
+
+#dashboardStats .dash-stat span{
+    font-size:12px !important;
+}
+
+/* Job grid — wider, easier to read */
+#jobs.jobs{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:22px !important;
+    align-items:stretch !important;
+}
+
+/* Job card */
+#jobs .job{
+    padding:27px 28px !important;
+    border-radius:20px !important;
+    min-height:0 !important;
+    box-shadow:0 14px 40px rgba(0,0,0,.18) !important;
+}
+
+#jobs .job:hover{
+    transform:translateY(-3px) !important;
+}
+
+/* Rank */
+#jobs .job-rank{
+    display:block !important;
+    margin-bottom:10px !important;
+    font-size:11px !important;
+    letter-spacing:1.2px !important;
+    color:#8ea7d4 !important;
+    font-weight:800 !important;
+}
+
+/* Job heading */
+#jobs .job-top{
+    gap:18px !important;
+}
+
+#jobs .job-head-copy{
+    padding-left:0 !important;
+}
+
+#jobs .job-head-copy h3{
+    font-size:20px !important;
+    line-height:1.4 !important;
+    margin-bottom:7px !important;
+}
+
+#jobs .job-head-copy small{
+    font-size:13px !important;
+}
+
+#jobs .score{
+    flex:0 0 62px !important;
+    width:62px !important;
+    height:62px !important;
+    font-size:15px !important;
+}
+
+/* Meta pills */
+#jobs .job-meta{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:6px !important;
+    margin-top:9px !important;
+}
+
+#jobs .meta-pill{
+    font-size:11px !important;
+    padding:6px 9px !important;
+    border-radius:7px !important;
+}
+
+/* Sections */
+#jobs .job-section{
+    margin-top:20px !important;
+    padding-top:16px !important;
+}
+
+#jobs .job-section-title{
+    margin-bottom:9px !important;
+    font-size:11px !important;
+    letter-spacing:1px !important;
+    color:#cbd8f2 !important;
+}
+
+#jobs .reason{
+    margin:0 !important;
+    font-size:14px !important;
+    line-height:1.65 !important;
+    color:#aebbd4 !important;
+}
+
+/* Skills */
+#jobs .skill-row{
+    gap:7px !important;
+}
+
+#jobs .match-skill,
+#jobs .missing-skill{
+    font-size:12px !important;
+    padding:7px 10px !important;
+    border-radius:8px !important;
+}
+
+#jobs .missing-skill{
+    color:#ffb3b3 !important;
+}
+
+/* Requirements */
+#jobs .requirements{
+    gap:10px !important;
+}
+
+#jobs .requirement{
+    padding:13px 14px !important;
+    border-radius:10px !important;
+    font-size:12px !important;
+    line-height:1.55 !important;
+}
+
+#jobs .requirement b{
+    display:block !important;
+    margin-bottom:5px !important;
+    font-size:10px !important;
+    color:#dbe6ff !important;
+}
+
+/* Search query */
+#jobs .query-line{
+    margin-top:17px !important;
+    padding-top:13px !important;
+    border-top:1px solid rgba(255,255,255,.07) !important;
+    font-size:12px !important;
+    line-height:1.55 !important;
+    color:#aebbd4 !important;
+}
+
+/* Buttons */
+#jobs .job-actions{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:9px !important;
+    margin-top:18px !important;
+    padding-top:16px !important;
+}
+
+#jobs .job-actions a{
+    margin:0 !important;
+    padding:10px 15px !important;
+    border-radius:9px !important;
+    font-size:12px !important;
+    font-weight:800 !important;
+}
+
+/* Empty state */
+#jobs .empty-state{
+    grid-column:1 / -1 !important;
+    padding:45px !important;
+    text-align:center !important;
+    border:1px solid rgba(100,155,255,.22) !important;
+    border-radius:18px !important;
+    background:#101a35 !important;
+}
+
+/* Responsive */
+@media(max-width:1050px){
+    #results{
+        width:calc(100% - 40px) !important;
+    }
+
+    #jobs.jobs{
+        grid-template-columns:1fr !important;
+    }
+}
+
+@media(max-width:800px){
+    #dashboardTools.dashboard-tools{
+        grid-template-columns:1fr 1fr !important;
+    }
+
+    #dashboardTools .tool-search{
+        grid-column:1 / -1 !important;
+    }
+
+    #dashboardStats.dashboard-stats{
+        grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    }
+}
+
+@media(max-width:560px){
+    #results{
+        width:calc(100% - 20px) !important;
+    }
+
+    #dashboardTools.dashboard-tools{
+        grid-template-columns:1fr !important;
+    }
+
+    #dashboardTools .tool-search{
+        grid-column:auto !important;
+    }
+
+    #dashboardStats.dashboard-stats{
+        grid-template-columns:1fr 1fr !important;
+    }
+
+    #jobs .job{
+        padding:21px !important;
+    }
+
+    #jobs .job-head-copy h3{
+        font-size:17px !important;
+    }
+
+    #jobs .requirements{
+        grid-template-columns:1fr !important;
+    }
+}
+</style>
+
+
+<style id="agent-workflow-css">
+.agent-workflow{display:none;width:min(1180px,calc(100% - 32px));margin:42px auto 0;padding:22px 24px;border:1px solid rgba(86,143,255,.24);border-radius:20px;background:linear-gradient(135deg,rgba(16,29,61,.92),rgba(10,19,42,.92));box-shadow:0 16px 45px rgba(0,0,0,.18)}
+.agent-workflow.show{display:block}
+.workflow-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:20px}
+.workflow-title{font-size:16px;font-weight:800}.workflow-subtitle{color:#8195bb;font-size:11px;margin-top:4px}
+.workflow-live{padding:7px 11px;border-radius:20px;background:#25df9c12;border:1px solid #25df9c38;color:#46e7b1;font-size:10px;font-weight:800;white-space:nowrap}
+.workflow-live.running:before{content:"";display:inline-block;width:7px;height:7px;margin-right:6px;border-radius:50%;background:#ffb03c;box-shadow:0 0 10px #ffb03c;animation:workflowPulse 1s infinite}
+@keyframes workflowPulse{50%{opacity:.3;transform:scale(.7)}}
+.workflow-track{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.workflow-step{position:relative;min-width:0;padding:14px 9px 12px;text-align:center;border:1px solid rgba(95,143,224,.15);border-radius:13px;background:#ffffff04;transition:.25s}
+.workflow-step:not(:last-child):after{content:"→";position:absolute;right:-12px;top:28px;color:#526b96;z-index:2;font-size:15px}
+.workflow-icon{width:34px;height:34px;margin:0 auto 8px;display:grid;place-items:center;border-radius:10px;background:#14274d;color:#9bb8e9;font-size:16px}
+.workflow-step strong{display:block;font-size:10px;color:#b9c9e7}.workflow-step small{display:block;margin-top:4px;color:#7185a8;font-size:9px}
+.workflow-step.active{border-color:#ff9d3270;background:#ff9d320c;box-shadow:0 0 22px #ff9d3215}
+.workflow-step.active .workflow-icon{background:#ff9d3218;color:#ffb24d;animation:workflowGlow 1.2s infinite alternate}
+.workflow-step.active strong{color:#ffd18d}
+.workflow-step.done{border-color:#25df9c45;background:#25df9c09}
+.workflow-step.done .workflow-icon{background:#25df9c15;color:#46e7b1;font-size:0}
+.workflow-step.done .workflow-icon:after{content:"✓";font-size:16px}
+.workflow-step.done strong{color:#7beac8}
+@keyframes workflowGlow{from{box-shadow:0 0 0 #ff9d3200}to{box-shadow:0 0 18px #ff9d3255}}
+.workflow-message{margin-top:15px;padding:11px 13px;border-radius:10px;background:#070f24;color:#93a8cc;font-size:11px;text-align:center}
+@media(max-width:900px){.workflow-track{grid-template-columns:repeat(3,1fr)}.workflow-step:nth-child(3):after,.workflow-step:nth-child(6):after{display:none}}
+@media(max-width:560px){.agent-workflow{width:calc(100% - 20px);padding:18px}.workflow-track{grid-template-columns:1fr 1fr}.workflow-step:after{display:none!important}.workflow-head{align-items:flex-start;flex-direction:column}}
+</style>
+
+
+<style id="validator-cleanup">
+.loading-message{margin-top:14px;color:#aab9d7}
+#dashboardTools{display:none}
+#dashboardStats{display:none}
+.footer-ai{color:#ff9d32}
+.profile-summary{color:#9eacc8;margin-top:8px}
+.job-source{color:#7890b8}
+</style>
+</head>
+<body>
+
+<nav>
+ <div class="brand">
+  <div class="robot">🤖</div>
+  <div><h1>JobScout <span>AI</span></h1><small>Your Career, Smarter with AI</small></div>
+ </div>
+ <div class="navlinks">
+  <a class="active" href="#">🏠 Home</a>
+  <a href="#how">◉ How It Works</a>
+  <a href="#features">▤ Features</a>
+  <a href="#about">About</a>
+ </div>
+ <button type="button" class="start" onclick="document.getElementById('cvFile').click()">🚀 Start Searching</button>
+</nav>
+
+<main>
+<section class="hero">
+ <div>
+  <div class="badge">✨ Powered by AI &nbsp;•&nbsp; Real Jobs &nbsp;•&nbsp; Better Career Opportunities</div>
+  <h2 class="hero-title">Find Jobs That<br><span class="gradient">Match Your CV</span></h2>
+  <p class="lead">Upload your CV and let JobScout AI analyze, search, evaluate and rank the best job opportunities for you automatically.</p>
+
+  <div class="features" id="features">
+   <div class="feature"><div class="ficon">⌕</div><p>AI-Powered<br>Job Search</p></div>
+   <div class="feature"><div class="ficon">▤</div><p>Smart CV<br>Analysis</p></div>
+   <div class="feature"><div class="ficon">▥</div><p>Accurate<br>Job Matching</p></div>
+   <div class="feature"><div class="ficon">⚡</div><p>Save Time<br>Get Hired Faster</p></div>
+  </div>
+ </div>
+
+ <div class="upload-card">
+  <div class="upload-head"><h3>📤 Upload Your CV</h3><span class="type">📄 PDF or DOCX</span></div>
+  <div class="drop" id="drop">
+   <div>
+    <div class="cloud">☁</div>
+    <h4>Drag &amp; drop your CV here</h4>
+    <p>or click to browse files</p>
+    <input id="cvFile" type="file" accept=".pdf,.docx">
+    <label class="choose" for="cvFile">📁 Choose File</label>
+    <div class="file-name" id="fileName"></div>
+   </div>
+  </div>
+  <button type="button" class="find" id="findBtn">🚀 Find My Jobs</button>
+  <div class="secure">🔒 Your information is secure and private</div>
+
+  <div class="orbit"></div>
+  <div class="cv-art"><strong>CV</strong><div class="cv-line"></div><div class="cv-line"></div><div class="cv-line"></div><div class="cv-line"></div></div>
+  <div class="note one">One CV<br>Multiple Opportunities ↘</div>
+  <div class="note two">Let AI<br>Work For You ↘</div>
+  <div class="note three">Smarter Search<br>Brighter Future</div>
+ </div>
+</section>
+
+<section class="stats">
+ <div class="stat"><div class="stat-icon">💼</div><div><h3>10K+</h3><p>Jobs Across Multiple Sources</p></div></div>
+ <div class="stat"><div class="stat-icon">👥</div><div><h3>95%</h3><p>Relevant Job Matches</p></div></div>
+ <div class="stat"><div class="stat-icon">◷</div><div><h3>5x</h3><p>Faster Job Search</p></div></div>
+ <div class="stat"><div class="stat-icon">🎯</div><div><h3>100%</h3><p>AI-Powered Analysis</p></div></div>
+</section>
+
+<section class="how" id="how">
+ <div class="label">Autonomous Career Agent</div>
+ <h2>How It <span class="gradient">Works</span></h2>
+ <p class="sub">From your CV to the best job matches in just a few steps</p>
+ <div class="steps">
+  <div class="step"><div class="num">1</div><div class="step-icon">📄</div><h3>Ingest</h3><p>We extract and understand your CV information.</p></div>
+  <div class="step"><div class="num">2</div><div class="step-icon">🧠</div><h3>Plan</h3><p>AI creates targeted job search queries.</p></div>
+  <div class="step"><div class="num">3</div><div class="step-icon">🔎</div><h3>Search</h3><p>We find real jobs across multiple sources.</p></div>
+  <div class="step"><div class="num">4</div><div class="step-icon">📊</div><h3>Evaluate</h3><p>AI analyzes and matches jobs with your profile.</p></div>
+  <div class="step"><div class="num">5</div><div class="step-icon">🏆</div><h3>Rank</h3><p>You get the best opportunities first.</p></div>
+ </div>
+</section>
+
+
+<section class="agent-workflow" id="agentWorkflow">
+  <div class="workflow-head">
+    <div>
+      <div class="section-kicker">AUTONOMOUS AGENT</div>
+      <div class="workflow-title">🤖 JobScout AI is working for you</div>
+      <div class="workflow-subtitle">Ingest → Plan → Search → Evaluate → Rank → Display</div>
+    </div>
+    <span class="workflow-live running" id="workflowLive">AGENT RUNNING</span>
+  </div>
+  <div class="workflow-track">
+    <div class="workflow-step" data-step="0"><div class="workflow-icon">📄</div><strong>Ingest CV</strong><small>Read your CV</small></div>
+    <div class="workflow-step" data-step="1"><div class="workflow-icon">🧠</div><strong>Plan</strong><small>Create queries</small></div>
+    <div class="workflow-step" data-step="2"><div class="workflow-icon">🔎</div><strong>Search</strong><small>Find real jobs</small></div>
+    <div class="workflow-step" data-step="3"><div class="workflow-icon">📊</div><strong>Evaluate</strong><small>Analyze matches</small></div>
+    <div class="workflow-step" data-step="4"><div class="workflow-icon">🏆</div><strong>Rank</strong><small>Score &amp; explain</small></div>
+    <div class="workflow-step" data-step="5"><div class="workflow-icon">🖥️</div><strong>Display</strong><small>Show results</small></div>
+  </div>
+  <div class="workflow-message" id="workflowMessage">Preparing your CV for autonomous job matching...</div>
+</section>
+
+<div id="loading"><div class="loader"></div><p class="loading-message">🤖 JobScout AI is analyzing your CV and finding matching jobs...</p></div>
+
+<section id="results">
+ <div class="result-head">
+  <div>
+   <div class="section-kicker">AI CAREER MATCHING</div>
+   <h2>🎯 Recommended <span class="gradient">Jobs</span></h2>
+  </div>
+  <span id="count" class="result-count"></span>
+ </div>
+
+ <div class="profile" id="profile"></div>
+
+ <div class="dashboard-tools" id="dashboardTools">
+  <div class="tool-search">🔎 <input id="jobSearch" type="text" placeholder="Search job title, skill or source..."></div>
+  <select id="matchFilter">
+   <option value="all">All Matches</option>
+   <option value="high">High Match (70%+)</option>
+   <option value="medium">Medium Match (40–69%)</option>
+   <option value="low">Low Match (&lt;40%)</option>
+  </select>
+  <select id="sortJobs">
+   <option value="score">Best Match First</option>
+   <option value="newest">Source / Title</option>
+   <option value="title">Job Title A–Z</option>
+  </select>
+ </div>
+
+ <div class="dashboard-stats" id="dashboardStats"></div>
+ <div class="jobs" id="jobs"></div>
+</section>
+</main>
+
+<footer id="about">
+ <div><strong>JobScout <span class="footer-ai">AI</span></strong><br>Autonomous Career Assistant</div>
+ <div class="online">● AI System Online</div>
+</footer>
+
+
+<script id="agent-workflow-js">
+const workflowMessages=[
+ "Reading and extracting information from your CV...",
+ "Building your candidate profile and planning targeted searches...",
+ "Searching multiple sources for relevant job opportunities...",
+ "Analyzing job requirements against your skills and experience...",
+ "Scoring, ranking and generating match explanations...",
+ "Preparing your recommended jobs dashboard..."
+];
+let workflowTimer=null;
+
+function resetWorkflow(){
+ document.querySelectorAll(".workflow-step").forEach(s=>s.classList.remove("active","done"));
+ const first=document.querySelector('.workflow-step[data-step="0"]');
+ if(first) first.classList.add("active");
+ document.getElementById("workflowMessage").textContent=workflowMessages[0];
+ const live=document.getElementById("workflowLive");
+ live.className="workflow-live running"; live.textContent="AGENT RUNNING";
+}
+function startWorkflow(){
+ document.getElementById("agentWorkflow").classList.add("show");
+ resetWorkflow();
+ let current=0;
+ clearInterval(workflowTimer);
+ workflowTimer=setInterval(()=>{
+   const steps=document.querySelectorAll(".workflow-step");
+   if(current<steps.length-1){
+     steps[current].classList.remove("active"); steps[current].classList.add("done");
+     current++; steps[current].classList.add("active");
+     document.getElementById("workflowMessage").textContent=workflowMessages[current];
+   }
+ },1200);
+}
+function finishWorkflow(){
+ clearInterval(workflowTimer);
+ document.querySelectorAll(".workflow-step").forEach(s=>{s.classList.remove("active");s.classList.add("done")});
+ document.getElementById("workflowMessage").textContent="Analysis complete — your jobs have been ranked and explained.";
+ const live=document.getElementById("workflowLive");
+ live.className="workflow-live done"; live.textContent="✓ AGENT COMPLETE";
+}
+</script>
+
+<script>
+const file=document.getElementById("cvFile"),nameBox=document.getElementById("fileName"),drop=document.getElementById("drop");
+file.onchange=()=>{if(file.files[0])nameBox.textContent="✓ "+file.files[0].name};
+["dragover","dragenter"].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.add("drag")}));
+["dragleave","drop"].forEach(e=>drop.addEventListener(e,x=>{x.preventDefault();drop.classList.remove("drag")}));
+drop.addEventListener("drop",e=>{if(e.dataTransfer.files.length){file.files=e.dataTransfer.files;nameBox.textContent="✓ "+file.files[0].name}});
+
+const esc=v=>{const d=document.createElement("div");d.textContent=String(v??"");return d.innerHTML};
+let allJobs=[];
+
+document.getElementById("findBtn").onclick=async()=>{
+ if(!file.files.length)return alert("Please upload your CV first.");
+ const f=file.files[0];
+ if(!f.name.toLowerCase().endsWith(".pdf")&&!f.name.toLowerCase().endsWith(".docx"))return alert("Only PDF and DOCX files are supported.");
+ const fd=new FormData();fd.append("file",f);
+ const btn=document.getElementById("findBtn");btn.disabled=true;btn.textContent="🤖 AI Searching...";
+ document.getElementById("loading").style.display="block";document.getElementById("results").style.display="none";
+ try{
+  const r=await fetch("http://127.0.0.1:8000/find-jobs",{method:"POST",body:fd});
+  const data=await r.json();if(!r.ok)throw new Error(data.detail||"Backend request failed.");
+  showResults(data);finishWorkflow();
+ }catch(e){clearInterval(workflowTimer);document.getElementById("workflowMessage").textContent="The agent could not complete this run. Check the backend terminal.";document.getElementById("workflowLive").textContent="AGENT ERROR";alert("JobScout AI Error:\n\n"+e.message)}
+ finally{btn.disabled=false;btn.textContent="🚀 Find My Jobs";document.getElementById("loading").style.display="none"}
+};
+
+function showResults(data){
+ const p=data.profile||{};
+ allJobs=Array.isArray(data.jobs)?data.jobs:[];
+ document.getElementById("results").style.display="block";
+ document.getElementById("dashboardTools").style.display="grid";
+ document.getElementById("dashboardStats").style.display="grid";
+ document.getElementById("count").textContent=allJobs.length+" jobs found";
+
+ const matched=allJobs.filter(j=>(j.evaluation?.match_score??0)>=70).length;
+ const medium=allJobs.filter(j=>{const s=j.evaluation?.match_score??0;return s>=40&&s<70}).length;
+ const avg=allJobs.length?Math.round(allJobs.reduce((a,j)=>a+(j.evaluation?.match_score??0),0)/allJobs.length):0;
+ document.getElementById("dashboardStats").innerHTML=`
+  <div class="dash-stat"><strong>${allJobs.length}</strong><span>Total Opportunities</span></div>
+  <div class="dash-stat"><strong>${matched}</strong><span>Strong Matches</span></div>
+  <div class="dash-stat"><strong>${medium}</strong><span>Potential Matches</span></div>
+  <div class="dash-stat"><strong>${avg}%</strong><span>Average Match</span></div>`;
+
+ document.getElementById("profile").innerHTML=`
+  <h3>🤖 AI Candidate Profile</h3>
+  <h2>${esc(p.name||"Candidate")}</h2>
+  <p class="profile-summary">${esc(p.summary||"AI-generated candidate profile")}</p>
+  ${p.location?`<div class="job-meta"><span class="meta-pill">📍 ${esc(p.location)}</span></div>`:""}
+  <div class="skills">${(p.skills||[]).map(x=>`<span class="skill">${esc(x)}</span>`).join("")}</div>`;
+ renderJobs();
+ document.getElementById("results").scrollIntoView({behavior:"smooth"});
+}
+
+function renderJobs(){
+ const search=(document.getElementById("jobSearch")?.value||"").trim().toLowerCase();
+ const filter=document.getElementById("matchFilter")?.value||"all";
+ const sort=document.getElementById("sortJobs")?.value||"score";
+ let jobs=[...allJobs].filter(j=>{
+  const score=j.evaluation?.match_score??0;
+  if(filter==="high"&&score<70)return false;
+  if(filter==="medium"&&(score<40||score>=70))return false;
+  if(filter==="low"&&score>=40)return false;
+  if(search){
+   const hay=[j.title,j.source,j.description,j.search_query,...(j.evaluation?.matched_skills||[]),...(j.evaluation?.missing_skills||[])].join(" ").toLowerCase();
+   if(!hay.includes(search))return false;
+  }
+  return true;
+ });
+ if(sort==="score")jobs.sort((a,b)=>(b.evaluation?.match_score??0)-(a.evaluation?.match_score??0));
+ if(sort==="title")jobs.sort((a,b)=>(a.title||"").localeCompare(b.title||""));
+ if(sort==="newest")jobs.sort((a,b)=>((a.source||"")+" "+(a.title||"")).localeCompare((b.source||"")+" "+(b.title||"")));
+ document.getElementById("count").textContent=jobs.length+" of "+allJobs.length+" jobs";
+ if(!jobs.length){document.getElementById("jobs").innerHTML=`<div class="empty-state">🔎 No jobs match the current filters.<br><small>Try another match level or search term.</small></div>`;return}
+ document.getElementById("jobs").innerHTML=jobs.map((j,i)=>{
+  const e=j.evaluation||{},a=j.job_analysis||{},score=e.match_score??0;
+  const matched=e.matched_skills||[],missing=e.missing_skills||[];
+  const responsibilities=a.responsibilities||[],reqSkills=a.required_skills||[];
+  const experience=a.experience_requirements||[],education=a.education_requirements||[];
+  const reason=e.match_reason||e.recommendation||"This opportunity was evaluated against the candidate profile.";
+  const level=e.match_level||"Analyzed";
+  const scoreClass=score>=70?"strong":score>=40?"medium":"low";
+  return `<article class="job">
+   <span class="job-rank">#${i+1} MATCH</span>
+   <div class="job-top">
+    <div class="job-head-copy">
+     <h3>${esc(j.title||"Job Opportunity")}</h3>
+     <small class="job-source">${esc(j.source||"Job Source")}</small>
+     <div class="job-meta"><span class="meta-pill">🎯 ${esc(level)}</span>${j.reader_content_available?`<span class="meta-pill">✓ Page analyzed</span>`:""}</div>
+    </div>
+    <div class="score ${scoreClass}">${score}%</div>
+   </div>
+
+   <div class="job-section"><div class="job-section-title">💡 WHY THIS JOB MATCHES</div><p class="reason">${esc(reason)}</p></div>
+
+   <div class="job-section"><div class="job-section-title">🧠 SKILL MATCH</div>
+    <div class="skill-row">
+     ${matched.length?matched.map(x=>`<span class="match-skill">✓ ${esc(x)}</span>`).join(""):"<span class=\"missing-skill\">No direct skill match</span>"}
+     ${missing.slice(0,8).map(x=>`<span class="missing-skill">+ ${esc(x)}</span>`).join("")}
+    </div>
+   </div>
+
+   ${reqSkills.length?`<div class="job-section"><div class="job-section-title">📋 REQUIRED SKILLS</div><div class="skill-row">${reqSkills.slice(0,10).map(x=>`<span class="meta-pill">${esc(x)}</span>`).join("")}</div></div>`:""}
+
+   <div class="job-section"><div class="job-section-title">📌 REQUIREMENTS</div>
+    <div class="requirements">
+     <div class="requirement"><b>EXPERIENCE</b>${esc(experience.slice(0,2).join(" • ")||"Not clearly specified")}</div>
+     <div class="requirement"><b>EDUCATION</b>${esc(education.slice(0,2).join(" • ")||"Not clearly specified")}</div>
+    </div>
+   </div>
+
+   ${responsibilities.length?`<div class="job-section"><div class="job-section-title">⚙ RESPONSIBILITIES</div><p class="reason">${esc(responsibilities.slice(0,3).join(" • "))}</p></div>`:""}
+   ${j.search_query?`<div class="query-line">🔎 Search query: <span>${esc(j.search_query)}</span></div>`:""}
+   <div class="job-actions">
+    ${j.url?`<a href="${esc(j.url)}" target="_blank" rel="noopener">View / Apply ↗</a>`:""}
+    ${j.url?`<a class="source-link" href="${esc(j.url)}" target="_blank" rel="noopener">Open source</a>`:""}
+   </div>
+  </article>`;
+ }).join("");
+}
+
+["jobSearch","matchFilter","sortJobs"].forEach(id=>document.getElementById(id).addEventListener("input",renderJobs));
+document.getElementById("matchFilter").addEventListener("change",renderJobs);
+document.getElementById("sortJobs").addEventListener("change",renderJobs);
+</script>
+</body>
+</html>
