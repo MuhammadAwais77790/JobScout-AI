@@ -36,7 +36,17 @@ app.add_middleware(
 # PROJECT PATHS
 # =========================================================
 
-BASE_DIR = Path(__file__).resolve().parents[2]
+# main.py is inside:
+# backend/app/main.py
+#
+# parents[0] = backend/app
+# parents[1] = backend
+
+BASE_DIR = Path(__file__).resolve().parents[1]
+
+# Frontend will be inside:
+# backend/frontend
+
 FRONTEND_DIR = BASE_DIR / "frontend"
 
 
@@ -101,6 +111,9 @@ async def find_jobs(file: UploadFile = File(...)):
 # FRONTEND DASHBOARD
 # =========================================================
 
+# Serve the frontend from:
+# backend/frontend/index.html
+
 if FRONTEND_DIR.exists():
     app.mount(
         "/dashboard",
@@ -109,4 +122,4 @@ if FRONTEND_DIR.exists():
             html=True,
         ),
         name="dashboard",
-    )   
+    )
