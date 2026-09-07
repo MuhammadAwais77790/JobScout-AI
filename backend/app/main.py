@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.cv_parser import extract_cv_text
 from app.career_agent import run_career_agent
+from fastapi.responses import RedirectResponse
 
 
 # =========================================================
@@ -56,11 +57,7 @@ FRONTEND_DIR = BASE_DIR / "frontend"
 
 @app.get("/")
 def root():
-    return {
-        "name": "JobScout AI",
-        "status": "running",
-        "message": "Autonomous Career Agent API is running.",
-    }
+    return RedirectResponse(url="/dashboard/")
 
 
 @app.get("/health")
